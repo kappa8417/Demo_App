@@ -2,66 +2,46 @@ package tw.itlab.zhaojun.demoapp.tablayout_test;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
-
-    private android.support.design.widget.TabLayout mTabs;
-
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTabs = (android.support.design.widget.TabLayout) findViewById(R.id.tabs);
-        mTabs.addTab(mTabs.newTab().setText("我是一號"));
-        mTabs.addTab(mTabs.newTab().setText("我是二號"));
-        mTabs.addTab(mTabs.newTab().setText("我是三號"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new SamplePagerAdapter());
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
-    }
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-    class SamplePagerAdapter extends PagerAdapter {
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final Tab_Apdater adapter = new Tab_Apdater
+                (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
 
-        @Override
-        public int getCount() {
-            return 3;
-        }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-        @Override
-        public boolean isViewFromObject(View view, Object o) {
-            return o == view;
-        }
+            }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Item " + (position + 1);
-        }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View view = getLayoutInflater().inflate(R.layout.pager_item,
-                    container, false);
-            container.addView(view);
-            TextView title = (TextView) view.findViewById(R.id.item_title);
-            title.setText(String.valueOf(position + 1));
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
+            }
+        });
     }
 
 }
