@@ -6,11 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by zhaojun on 15/12/10.
@@ -22,7 +22,7 @@ public class okhttp_GET extends AppCompatActivity {
 
     String cache = null;
 
-    private static String url_location = "http://120.114.104.124/json/";
+    private static String url_location = "https://raw.github.com/square/okhttp/master/README.md";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class okhttp_GET extends AppCompatActivity {
         try {
 
             ok_http_core example = new ok_http_core();
+
             cache = example.run(url);
 
         } catch (IOException e) {
@@ -54,11 +55,14 @@ public class okhttp_GET extends AppCompatActivity {
         OkHttpClient client = new OkHttpClient();
 
         String run(String url) throws IOException {
-            Request request = new Request.Builder().url(url).build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
 
             Response response = client.newCall(request).execute();
             return response.body().string();
         }
+
     }
 
     class LoadingDataAsyncTask extends AsyncTask<String, Integer, Integer> {
