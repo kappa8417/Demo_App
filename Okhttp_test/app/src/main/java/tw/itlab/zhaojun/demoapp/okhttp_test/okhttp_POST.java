@@ -4,11 +4,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
-import okhttp3.MediaType;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -22,33 +24,39 @@ public class okhttp_POST extends AppCompatActivity {
 
     TextView show;
 
+    EditText say;
+
     String content = null, cache = null;
 
-    private static String url_location = "http://www.roundsapp.com/post";
+    private static String url_location = "http://127.0.0.1/post";
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.okhttp_post);
 
+        say = (EditText) findViewById(R.id.enter);
         show = (TextView) findViewById(R.id.show);
 
     }
 
     public void clac(View view) {
 
-        new LoadingDataAsyncTask().execute();
+        content = say.getText().toString();
 
+        if (content.equals("")) {
+            Toast.makeText(this, "請輸入文字", Toast.LENGTH_SHORT).show();
+        } else {
+            new LoadingDataAsyncTask().execute();
+        }
     }
 
     public void call_ok_http(String url) {
         try {
 
             ok_http_core example = new ok_http_core();
-            String json = example.bowlingJson("Jesse", "Jake");
-            cache = example.post(url, json);
+            cache = example.post(url, content);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,26 +67,16 @@ public class okhttp_POST extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
 
-        String post(String url, String json) throws IOException {
-            RequestBody body = RequestBody.create(JSON, json);
+        String post(String url, String text) throws IOException {
+            RequestBody body = new FormBody.Builder()
+                    .add("content", text)
+                    .build();
             Request request = new Request.Builder()
                     .url(url)
                     .post(body)
                     .build();
             Response response = client.newCall(request).execute();
             return response.body().string();
-        }
-
-        String bowlingJson(String player1, String player2) {
-            return "{'winCondition':'HIGH_SCORE',"
-                    + "'name':'Bowling',"
-                    + "'round':4,"
-                    + "'lastSaved':1367702411696,"
-                    + "'dateStarted':1367702378785,"
-                    + "'players':["
-                    + "{'name':'" + player1 + "','history':[10,8,6,7,8],'color':-13388315,'total':39},"
-                    + "{'name':'" + player2 + "','history':[6,10,5,10,10],'color':-48060,'total':41}"
-                    + "]}";
         }
     }
 
@@ -113,7 +111,6 @@ public class okhttp_POST extends AppCompatActivity {
         }
 
     }
-
 
 }
 
